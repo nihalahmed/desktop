@@ -70,7 +70,7 @@ export class FileList extends React.Component<IFileListProps, {}> {
       statusWidth
 
     return (
-      <div className="file" onContextMenu={this.onContextMenu}>
+      <div className="file" onContextMenu={this.onContextMenu} onDoubleClick={this.onDoubleClick}>
         <PathLabel
           path={file.path}
           status={file.status}
@@ -155,5 +155,27 @@ export class FileList extends React.Component<IFileListProps, {}> {
       },
     ]
     showContextualMenu(items)
+  }
+
+  private onDoubleClick = async (event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault()
+
+    if (this.props.selectedFile == null) {
+      return
+    }
+
+    const filePath = this.props.selectedFile.path
+    const fullPath = Path.join(this.props.repository.path, filePath)
+    const fileExistsOnDisk = await pathExists(fullPath)
+    if (!fileExistsOnDisk) {
+      return
+    }
+
+    const extension = Path.extname(filePath)
+    const isSafeExtension = isSafeFileExtension(extension)
+
+    if (isSafeExtension && fileExistsOnDisk) {
+      this.props.onOpenItem(filePath)
+    }
   }
 }

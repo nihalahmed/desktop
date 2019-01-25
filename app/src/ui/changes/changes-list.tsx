@@ -180,6 +180,7 @@ export class ChangesList extends React.Component<
         include={includeAll}
         key={file.id}
         onContextMenu={this.onItemContextMenu}
+        onDoubleClick={this.onDoubleClick}
         onIncludeChanged={this.props.onIncludeChanged}
         availableWidth={this.props.availableWidth}
         disableSelection={this.props.isCommitting}
@@ -378,6 +379,22 @@ export class ChangesList extends React.Component<
     )
 
     showContextualMenu(items)
+  }
+
+  private onDoubleClick = (
+    id: string,
+    path: string,
+    status: AppFileStatus,
+    event: React.MouseEvent<HTMLDivElement>
+  ) => {
+    event.preventDefault()
+
+    const extension = Path.extname(path)
+    const isSafeExtension = isSafeFileExtension(extension)
+
+    if (isSafeExtension && status.kind !== AppFileStatusKind.Deleted) {
+      this.props.onOpenItem(path)
+    }
   }
 
   private getPlaceholderMessage(

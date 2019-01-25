@@ -22,6 +22,14 @@ interface IChangedFileProps {
     status: AppFileStatus,
     event: React.MouseEvent<HTMLDivElement>
   ) => void
+
+  /** Callback called when user double-clicks on an item */
+  readonly onDoubleClick: (
+    id: string,
+    path: string,
+    status: AppFileStatus,
+    event: React.MouseEvent<HTMLDivElement>
+  ) => void
 }
 
 /** a changed file in the working directory for a given repository */
@@ -58,7 +66,7 @@ export class ChangedFile extends React.Component<IChangedFileProps, {}> {
       statusWidth
 
     return (
-      <div className="file" onContextMenu={this.onContextMenu}>
+      <div className="file" onContextMenu={this.onContextMenu} onDoubleClick={this.onDoubleClick}>
         <Checkbox
           // The checkbox doesn't need to be tab reachable since we emulate
           // checkbox behavior on the list item itself, ie hitting space bar
@@ -86,6 +94,15 @@ export class ChangedFile extends React.Component<IChangedFileProps, {}> {
 
   private onContextMenu = (event: React.MouseEvent<HTMLDivElement>) => {
     this.props.onContextMenu(
+      this.props.id,
+      this.props.path,
+      this.props.status,
+      event
+    )
+  }
+
+  private onDoubleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    this.props.onDoubleClick(
       this.props.id,
       this.props.path,
       this.props.status,
